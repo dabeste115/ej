@@ -1,0 +1,1150 @@
+POM
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.upc</groupId>
+  <artifactId>semana6</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <build>
+		<finalName>semana6</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  
+ <dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>2.2.13</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>2.2.13</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>6.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+			<version>2.5.1</version>
+		</dependency>
+		
+<!-- 		Para traer los temas de primefaces -->
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+		
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+
+	</project>
+
+WEB
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+	<display-name>semana6</display-name>
+	<welcome-file-list>
+		<welcome-file>index.xhtml</welcome-file>
+	</welcome-file-list>
+<!-- definimos una variable primefaces.THEME cuyo valor es bootstrap -->
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>bootstrap</param-value>
+	</context-param>	
+<!-- Define faces que son servlet  -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!-- Anada correlaciones de servlets en el archivo WEB-INF/web.xml 
+	para cada definicion de servlet. La via de acceso de servlet se anadira
+	 en la raiz de contexto de la aplicacion web -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+
+</web-app>
+
+PERSISTANCE
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="semana6PU" transaction-type="JTA">
+		<jta-data-source>java:/ejemploDS</jta-data-source>
+		<class>edu.upc.entity.Employee</class>
+		<class>edu.upc.entity.Departament</class>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="none" />
+		</properties>
+	</persistence-unit>
+</persistence>
+
+BEANS
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
+       version="2.0" bean-discovery-mode="all">    
+</beans>
+
+
+EMPLOYEE
+package edu.upc.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = " Employee")
+
+public class Employee {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int idEmployee;
+
+	@Column(name = "nameEmployee", length = 60, nullable = false)
+	private String nameEmployee;
+
+	@Column(name = "adressEmployee", length = 60, nullable = true)
+	private String adressEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "idDepartment", nullable = false)
+	private Departament departament;
+
+	public Employee() {
+		super();
+	}
+
+	public Employee(int idEmployee, String nameEmployee, String adressEmployee, Departament departament) {
+		super();
+		this.idEmployee = idEmployee;
+		this.nameEmployee = nameEmployee;
+		this.adressEmployee = adressEmployee;
+		this.departament = departament;
+	}
+
+	public int getIdEmployee() {
+		return idEmployee;
+	}
+
+	public void setIdEmployee(int idEmployee) {
+		this.idEmployee = idEmployee;
+	}
+
+	public String getNameEmployee() {
+		return nameEmployee;
+	}
+
+	public void setNameEmployee(String nameEmployee) {
+		this.nameEmployee = nameEmployee;
+	}
+
+	public String getAdressEmployee() {
+		return adressEmployee;
+	}
+
+	public void setAdressEmployee(String adressEmployee) {
+		this.adressEmployee = adressEmployee;
+	}
+
+	public Departament getDepartament() {
+		return departament;
+	}
+
+	public void setDepartament(Departament departament) {
+		this.departament = departament;
+	}
+
+
+
+
+}
+
+EMPLOYEE DAO
+package edu.upc.dao;
+
+import java.util.List;
+
+import javax.ejb.Local;
+
+import edu.upc.entity.Employee;
+
+
+@Local
+
+public interface IEmployeeDAO  extends IDAO<Employee>{
+
+	
+	
+	public List<Employee> buscarNombre(Employee employee);
+	}
+
+
+
+
+EMPLOYEE DAO IMPL
+package edu.upc.daoimpl;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import edu.upc.dao.IEmployeeDAO;
+import edu.upc.entity.Employee;
+
+@Stateless
+public class EmployeeDAOImpl  implements IEmployeeDAO, Serializable{
+
+	
+	@PersistenceContext(unitName = "semana6PU")
+	private EntityManager manager;
+	
+	@Override
+	public void insertar(Employee t) {
+		try {
+			manager.persist(t);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+	}
+
+	@Override
+	public void actualizar(Employee t) {
+		try {
+			manager.merge(t);
+		} catch (Exception e) {
+			e.getMessage();
+
+		}
+		
+	}
+
+	@Override
+	public void eliminar(int idT) {
+		try {
+			Employee empl = new Employee();
+			empl = manager.getReference(Employee.class, idT);
+			manager.remove(empl);
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Employee> listar() {
+		List<Employee> lista = null;
+		try {
+			Query query = manager.createQuery("FROM Employee e");
+			lista = (List<Employee>) query.getResultList();
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		return lista;
+
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public Employee listarId(int idT) {
+		List<Employee> lista = null;
+		Employee em = new Employee();
+		try {
+			Query query = manager.createQuery("FROM Employee e where e.idEmployee=?1");
+			query.setParameter(1, idT);
+			lista = (List<Employee>) query.getResultList();
+			if (lista != null && !lista.isEmpty()) {
+				em = lista.get(0);
+			}
+		} catch (Exception e) {
+			e.getMessage();
+
+		}
+		return em;
+
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Employee> buscarNombre(Employee employee) {
+		List<Employee> lista = null;
+		try {
+			Query query = manager.createQuery("FROM Employee e where e.nameEmployee like ?1");
+			query.setParameter(1, "%" + employee.getNameEmployee() + "%");
+			lista=(List<Employee>) query.getResultList();
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		return lista;
+
+	}
+
+}
+
+IDAO
+package edu.upc.dao;
+
+import java.util.List;
+
+public interface IDAO<T> {
+
+	
+	public void insertar(T t);
+	public void actualizar(T t);
+	public void eliminar(int idT);
+	public List<T> listar();
+	public T listarId(int idT);
+
+}
+
+EMPLOYEE CONTROLLER
+package edu.upc.controller;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import edu.upc.entity.Departament;
+import edu.upc.entity.Employee;
+import edu.upc.service.IDepartamentSERVICE;
+import edu.upc.service.IEmployeeSERVICE;
+
+@Named
+@SessionScoped
+public class EmployeeController implements Serializable{
+	
+	@Inject
+	private IDepartamentSERVICE departamentService;
+	@Inject
+	private IEmployeeSERVICE employeeService;
+
+	
+	private Departament departament;;
+	private List<Departament> listaDepartamentos;
+
+	private Employee employee;
+	private List<Employee> listaEmpleados;
+
+	
+	   @PostConstruct
+		public void init() {
+			departament = new Departament();
+			employee = new Employee();
+			listaDepartamentos = new ArrayList<>();
+			listaEmpleados = new ArrayList<>();
+
+			this.listarEmpleado();
+			this.listarDepartamento();
+		}
+
+	      public String nuevoEmpleado() {
+	  		this.setEmployee(new Employee());
+	  		return "employee.xhtml";
+	  	}
+
+	  	public void insertarActualizar() {
+	  		try {
+	  			if (employee.getIdEmployee() > 0) {
+	  				employeeService.actualizar(employee);
+	  				limpiarEmpleado();
+	  			} else {
+	  				employeeService.insertar(employee);
+	  				limpiarEmpleado();
+	  			}
+	  			this.listarEmpleado();
+	  		} catch (Exception e) {
+	  			e.getMessage();
+	  		}
+	  	}
+
+	  	public void eliminar(Employee employee) {
+	  		try {
+	  			employeeService.eliminar(employee.getIdEmployee());
+	  			listarEmpleado();
+	  		} catch (Exception e) {
+	  			e.getMessage();
+	  		}
+	  	}
+
+	  	public void listarEmpleado() {
+	  		try {
+	  			listaEmpleados = employeeService.listar();
+	  		} catch (Exception e) {
+	  			e.getMessage();
+	  		}
+	  	}
+
+	  	public void listarDepartamento() {
+	  		try {
+	  			listaDepartamentos = departamentService.listar();
+	  		} catch (Exception e) {
+	  			e.getMessage();
+	  		}
+	  	}
+
+	  	public void mostrar(Employee empl) {
+	  		try {
+	  			this.departament.setIdDepartament(empl.getDepartament().getIdDepartament());
+	  			this.departament.setNameDepartament(empl.getDepartament().getNameDepartament());
+	  			this.departament.setDescriptionDepartament(empl.getDepartament().getDescriptionDepartament());
+
+	  			this.employee.setIdEmployee(empl.getIdEmployee());
+	  			this.employee.setNameEmployee(empl.getNameEmployee());
+	  			this.employee.setAdressEmployee(empl.getAdressEmployee());
+	  			this.employee.setDepartament(departament);
+
+	  		} catch (Exception e) {
+	  			e.getStackTrace();
+	  		}
+	  	}
+
+	  	public void buscarEmployeeNombre() {
+	  		try {
+	  			if (employee.getNameEmployee().isEmpty()) {
+	  				this.listarEmpleado();
+	  			} else {
+	  				listaEmpleados = this.employeeService.buscarNombre(this.getEmployee());
+	  			}
+	  		} catch (Exception e) {
+	  			e.getMessage();
+	  		}
+	  	}
+
+	  	public void limpiarEmpleado() {
+	  		this.init();
+	  	}
+
+		public Departament getDepartament() {
+			return departament;
+		}
+
+		public void setDepartament(Departament departament) {
+			this.departament = departament;
+		}
+
+		public List<Departament> getListaDepartamentos() {
+			return listaDepartamentos;
+		}
+
+		public void setListaDepartamentos(List<Departament> listaDepartamentos) {
+			this.listaDepartamentos = listaDepartamentos;
+		}
+
+		public Employee getEmployee() {
+			return employee;
+		}
+
+		public void setEmployee(Employee employee) {
+			this.employee = employee;
+		}
+
+		public List<Employee> getListaEmpleados() {
+			return listaEmpleados;
+		}
+
+		public void setListaEmpleados(List<Employee> listaEmpleados) {
+			this.listaEmpleados = listaEmpleados;
+		}
+
+}
+
+
+ISERVICE
+package edu.upc.service;
+
+import java.util.List;
+
+public interface ISERVICE<T>{
+	
+	public void insertar(T t);
+	public void actualizar(T t);
+	public void eliminar(int idT);
+	public List<T> listar() throws Exception;
+	public T listarId(int idT) throws Exception;
+
+}
+
+
+IEMPLOYEESERVICE
+package edu.upc.service;
+
+import java.util.List;
+
+import edu.upc.entity.Employee;
+
+public interface IEmployeeSERVICE extends ISERVICE<Employee>{
+	public List<Employee> buscarNombre(Employee employee) throws Exception;
+}
+
+EMPLOYEESERVICEIMPL
+package edu.upc.serviceimpl;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
+import edu.upc.dao.IEmployeeDAO;
+import edu.upc.entity.Employee;
+import edu.upc.service.IEmployeeSERVICE;
+
+
+@Named
+@RequestScoped
+
+public class EmployeeSERVICEImpl implements IEmployeeSERVICE, Serializable {
+
+	
+	
+	private static final long serialVersionUID = 1L;
+	@EJB
+	private IEmployeeDAO eDao;
+
+	@Override
+	public void insertar(Employee t) {
+		try {
+			eDao.insertar(t);
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		
+	}
+
+	@Override
+	public void actualizar(Employee t) {
+		try {
+			eDao.actualizar(t);
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		
+	}
+
+	@Override
+	public void eliminar(int idT) {
+		try {
+			eDao.eliminar(idT);
+		} catch (Exception e) {
+			e.getMessage();
+		}
+		
+	}
+
+	@Override
+	public List<Employee> listar() throws Exception {
+		return eDao.listar();
+	}
+
+	@Override
+	public Employee listarId(int idT) throws Exception {
+		return eDao.listarId(idT);
+	}
+
+	@Override
+	public List<Employee> buscarNombre(Employee employee) throws Exception {
+		return eDao.buscarNombre(employee);
+	}
+}
+
+
+
+VISTAS
+
+
+DEPARTAMENT
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+<ui:composition template="master.xhtml">
+
+	<ui:define name="title">
+        .:Registro de Departamento:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Registro de Departamento </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<h:outputLabel for="idDept" value="Id "
+				styleClass="control-label" />
+	
+			<p:inputText autocomplete="off" id="idDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.idDepartament}"
+				required="true" maxlength="30" />
+				
+			<h:outputLabel for="nameDept" value="Departamento: "
+				styleClass="control-label" />
+	
+			<p:inputText autocomplete="off" id="nameDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.nameDepartament}"
+				required="true" maxlength="30"  />
+				
+			<h:outputLabel for="desDept" value="Descripcion: "
+				styleClass="control-label" />
+
+			<p:inputText autocomplete="off" id="desDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.descriptionDepartament}"
+				required="true" maxlength="30"  />
+
+
+			<p:commandButton value="Grabar"
+				actionListener="#{departamentController.insertarActualizar()}"
+				styleClass="btn btn-primary " update="@form"
+				action="listDepartament?faces-redirect=true" />
+			<p:commandButton value="Cancelar"
+				action="listDepartament?faces-redirect=true" immediate="true"
+				styleClass="btn btn-default" ajax="false" />
+
+
+
+
+			<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+
+		</h:form>
+</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+</html>
+
+
+EMPLEADO
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="master.xhtml">
+
+	<ui:define name="title">
+        .:Registro de Empleado:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Registro de Empleado </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<h:outputLabel for="id" value="Id" styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="id" styleClass="form-control"
+							value="#{employeeController.employee.idEmployee}" required="true"
+							maxlength="120"  />
+
+						<h:outputLabel for="nombre" value="Nombre:"
+							styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="nombre"
+							styleClass="form-control"
+							value="#{employeeController.employee.nameEmployee}"
+							required="true" maxlength="120" />
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<h:outputLabel for="adress" value="Direccion"
+							styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="adress"
+							styleClass="form-control"
+							value="#{employeeController.employee.adressEmployee}"
+							required="true" maxlength="120"  />
+					</div>
+				</div>
+			</div>
+
+				<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<p:outputLabel for="cboDepartament" value="Departamento" />
+
+						<p:selectOneMenu id="cboDepartament"
+							value="#{employeeController.employee.departament}"
+							converter="omnifaces.SelectItemsConverter">
+
+							<f:selectItems 
+							value="#{employeeController.listaDepartamentos}"
+								var="d" 
+								itemLabel="#{d.nameDepartament}" 
+								itemValue="#{d}" />
+						</p:selectOneMenu>
+
+
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="row">
+				<div class="col-sm-2 text-right">
+					<div class="form-group box-main-btn">
+
+						<p:commandButton value="Grabar"
+							actionListener="#{employeeController.insertarActualizar()}"
+							styleClass="btn btn-primary " update=""
+							action="listEmployee.xhtml" />
+						<p:commandButton value="Cancelar" action="listEmployee.xhtml"
+							immediate="true" styleClass="btn btn-default" ajax="false" />
+
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+	</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+
+</html>
+
+
+PANEL
+ 
+ 
+ <ui:composition template="master.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+    <ui:define name="title">
+        .:Listado de Tabla :.
+    </ui:define>
+
+    <ui:define name="titleCont">
+        <span>Inicio </span>
+    </ui:define>
+
+    <ui:define name="content">
+		<h:form>
+			Bienvenido!!! a IO Visor Project
+		</h:form>
+    </ui:define>
+
+    <ui:define name="footerCont">
+        
+    </ui:define>
+</ui:composition>
+
+
+MASTER
+<!DOCTYPE html>
+<html lang="es" class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<meta charset="utf-8" />
+	<title><ui:insert name="title"></ui:insert></title>
+	<meta name="generator" content="Bootply" />
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<link
+		href='https://fonts.googleapis.com/css?family=Roboto:400,300,500|Ubuntu+Condensed'
+		rel='stylesheet' type='text/css' />
+
+	<h:outputStylesheet name="css/bootstrap.min.css" />
+	<h:outputStylesheet name="css/main_base.css" />
+	<h:outputStylesheet name="css/font_ico.css" />
+	<ui:insert name="headCont"></ui:insert>
+
+</h:head>
+<h:body>
+	<nav class="navbar navbar-default navbar-fixed-top base_primary"
+		role="banner">
+		<div class="container">
+			<div class="navbar-header">
+				<button class="navbar-toggle" type="button" data-toggle="collapse"
+					data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand"
+					style="display: table; padding-top: 5px; padding-bottom: 5px;"><img
+					src="resources/img/logo.png" alt="" height="50" /></a>
+			</div>
+
+		</div>
+	</nav>
+
+
+	<!--main-->
+	<div class="container base_fondo_fff"
+		style="min-height: 600px; border-radius: 4px; margin-top: 35px;">
+		<div class="row">
+			<!--left-->
+			<div class="col-md-3" id="leftCol">
+				<ul class="nav nav-stacked" id="sidebar">
+					<li id="sidebar-1"><a href="panel.xhtml"><i
+							class="icon-home"></i> Inicio</a></li>
+					<li id="sidebar-2"><a href="listDepartament.xhtml"><i
+							class="icon-user"></i> Departamento</a></li>
+					<li id="sidebar-2"><a href="listEmployee.xhtml"><i
+							class="icon-user"></i> Empleado</a></li>
+
+				</ul>
+			</div>
+			<!--/left-->
+
+			<!--right-->
+			<div class="col-md-9" style="padding-right: 30px">
+				<h2 id="sec0" class="title-style">
+					<ui:insert name="titleCont">Titulo</ui:insert>
+				</h2>
+
+				<!-- seccion para el contenido -->
+				<ui:insert name="content">
+				</ui:insert>
+
+			</div>
+			<!--/right-->
+		</div>
+		<!--/row-->
+	</div>
+	<!--/container-->
+
+	<ui:insert name="footerCont"></ui:insert>
+
+</h:body>
+</html>
+
+LISTA EMPLEADO
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<ui:composition template="master.xhtml">
+	<ui:define name="title">
+        .:Listado de Empleados:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Listado de Empleados </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<h:outputLabel for="nombres" value="Nombres:"
+							styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="nombres"
+							styleClass="form-control"
+							value="#{employeeController.employee.nameEmployee}"
+							maxlength="120" />
+					</div>
+				</div>
+
+				<div class="col-sm-8 text-right">
+					<div class="form-group box-main-btn">
+						<span style="display: block; height: 30px;"></span>
+						<p:commandButton value="Limpiar" update="lstEmployees"
+							actionListener="#{employeeController.limpiarEmpleado()}"
+							styleClass="btn btn-default" ajax="false" />
+
+						<p:commandButton value="Buscar" update="lstEmployees"
+							actionListener="#{employeeController.buscarEmployeeNombre()}"
+							styleClass="btn btn-default btn-border" ajax="true" />
+
+						<p:commandButton value="Nuevo"
+							action="#{employeeController.nuevoEmpleado()}"
+							styleClass="btn btn-primary" ajax="false" />
+
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group table-responsive box-table-class">
+
+						<p:dataTable id="lstEmployees" var="employee"
+							value="#{employeeController.listaEmpleados}" paginator="true"
+							paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+							rows="10" styleClass="table table-bordered"
+							emptyMessage="No existen registros" rowIndexVar="item"
+							style="margin-bottom:0">
+
+							<p:column headerText="Item" style="width:40px;text-align:center">
+								<h:outputText value="#{item + 1}" />
+							</p:column>
+
+							<p:column headerText="Id">
+								<h:outputText value="#{employee.idEmployee}" />
+							</p:column>
+
+							<p:column headerText="Nombre">
+								<h:outputText value="#{employee.nameEmployee}" />
+							</p:column>
+
+							<p:column headerText="Direccion">
+								<h:outputText value="#{employee.adressEmployee}" />
+							</p:column>
+
+							<p:column headerText="Departamento">
+								<h:outputText value="#{employee.departament.nameDepartament}" />
+							</p:column>
+							<p:column headerText="Operacion">
+								<h:commandLink action="listEmployee" value="Eliminar"
+									actionListener="#{employeeController.eliminar(employee)}" />
+							</p:column>
+							<p:column headerText="Operacion">
+								<h:commandLink action="employee" value="Actualizar"
+									actionListener="#{employeeController.mostrar(employee)}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+
+				</div>
+			</div>
+
+
+		</h:form>
+	</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+
+
+
+</html>
+
+
+LISTA DEPARTAMENTO
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="master.xhtml">
+
+	<ui:define name="title">
+        .:Listado de Departamentos:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Listado de Departamentos </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<h:outputLabel for="nombres" value="Nombres:"
+							styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="nombres"
+							styleClass="form-control"
+							value="#{departamentController.departament.nameDepartament}"
+							maxlength="120"  />
+					</div>
+				</div>
+
+				<div class="col-sm-8 text-right">
+					<div class="form-group box-main-btn">
+						<span style="display: block; height: 30px;"></span>
+						<p:commandButton value="Limpiar" update="lstDepartament"
+							actionListener="#{departamentController.limpiarDepartamento()}"
+							styleClass="btn btn-default" ajax="false" />
+
+						<p:commandButton value="Buscar" update="lstDepartament"
+							actionListener="#{departamentController.buscarDepartamentoNombre()}"
+							styleClass="btn btn-default btn-border" ajax="true" />
+
+						<p:commandButton value="Nuevo"
+							action="#{departamentController.nuevoDepartamento()}"
+							styleClass="btn btn-primary" ajax="false" />
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group table-responsive box-table-class">
+
+						<p:dataTable id="lstDepartament" var="departament"
+							value="#{departamentController.listaDepartamentos}"
+							paginator="true" paginatorPosition="top"
+							rowsPerPageTemplate="10,20,30,40,50" rows="10"
+							styleClass="table table-bordered"
+							emptyMessage="No existen registros" rowIndexVar="item"
+							style="margin-bottom:0">
+
+							<p:column headerText="Item" style="width:40px;text-align:center">
+								<h:outputText value="#{item + 1}" />
+							</p:column>
+
+							<p:column headerText="Id">
+								<h:outputText value="#{departament.idDepartament}" />
+							</p:column>
+
+							<p:column headerText="Nombre">
+								<h:outputText value="#{departament.nameDepartament}" />
+							</p:column>
+							<p:column headerText="Descripcion">
+								<h:outputText value="#{departament.descriptionDepartament}" />
+							</p:column>
+							<p:column headerText="Operacion">
+								<h:commandLink action="listDepartament" value="Eliminar"
+									actionListener="#{departamentController.eliminar(departament)}" />
+							</p:column>
+
+							<p:column headerText="Operacion">
+								<h:commandLink action="departament" value="Actualizar"
+									actionListener="#{departamentController.listarId(departament)}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+</html>
+
+
+
+IDNEX
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head></h:head>
+<body>
+	<h:form>
+		<h:commandLink value="Ir" action="panel" />
+
+	</h:form>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
