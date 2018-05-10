@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+<ui:composition template="master.xhtml">
+
+	<ui:define name="title">
+        .:Registro de Departamento:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Registro de Departamento </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<h:outputLabel for="idDept" value="Id "
+				styleClass="control-label" />
+	
+			<p:inputText autocomplete="off" id="idDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.idDepartament}"
+				required="true" maxlength="30" />
+				
+			<h:outputLabel for="nameDept" value="Departamento: "
+				styleClass="control-label" />
+	
+			<p:inputText autocomplete="off" id="nameDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.nameDepartament}"
+				required="true" maxlength="30"  />
+				
+			<h:outputLabel for="desDept" value="Descripción: "
+				styleClass="control-label" />
+
+			<p:inputText autocomplete="off" id="desDept"
+				styleClass="form-control"
+				value="#{departamentController.departament.descriptionDepartament}"
+				required="true" maxlength="30"  />
+
+
+			<p:commandButton value="Grabar"
+				actionListener="#{departamentController.insertarActualizar()}"
+				styleClass="btn btn-primary " update="@form"
+				action="listDepartament?faces-redirect=true" />
+			<p:commandButton value="Cancelar"
+				action="listDepartament?faces-redirect=true" immediate="true"
+				styleClass="btn btn-default" ajax="false" />
+
+
+
+
+			<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+
+		</h:form>
+</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+</html>

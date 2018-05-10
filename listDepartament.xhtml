@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="master.xhtml">
+
+	<ui:define name="title">
+        .:Listado de Departamentos:.
+    </ui:define>
+
+	<ui:define name="titleCont">
+		<span>Listado de Departamentos </span>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="form-group">
+						<h:outputLabel for="nombres" value="Nombres:"
+							styleClass="control-label" />
+
+						<p:inputText autocomplete="off" id="nombres"
+							styleClass="form-control"
+							value="#{departamentController.departament.nameDepartament}"
+							maxlength="120"  />
+					</div>
+				</div>
+
+				<div class="col-sm-8 text-right">
+					<div class="form-group box-main-btn">
+						<span style="display: block; height: 30px;"></span>
+						<p:commandButton value="Limpiar" update="lstDepartament"
+							actionListener="#{departamentController.limpiarDepartamento()}"
+							styleClass="btn btn-default" ajax="false" />
+
+						<p:commandButton value="Buscar" update="lstDepartament"
+							actionListener="#{departamentController.buscarDepartamentoNombre()}"
+							styleClass="btn btn-default btn-border" ajax="true" />
+
+						<p:commandButton value="Nuevo"
+							action="#{departamentController.nuevoDepartamento()}"
+							styleClass="btn btn-primary" ajax="false" />
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group table-responsive box-table-class">
+
+						<p:dataTable id="lstDepartament" var="departament"
+							value="#{departamentController.listaDepartamentos}"
+							paginator="true" paginatorPosition="top"
+							rowsPerPageTemplate="10,20,30,40,50" rows="10"
+							styleClass="table table-bordered"
+							emptyMessage="No existen registros" rowIndexVar="item"
+							style="margin-bottom:0">
+
+							<p:column headerText="Item" style="width:40px;text-align:center">
+								<h:outputText value="#{item + 1}" />
+							</p:column>
+
+							<p:column headerText="Id">
+								<h:outputText value="#{departament.idDepartament}" />
+							</p:column>
+
+							<p:column headerText="Nombre">
+								<h:outputText value="#{departament.nameDepartament}" />
+							</p:column>
+							<p:column headerText="Descripción">
+								<h:outputText value="#{departament.descriptionDepartament}" />
+							</p:column>
+							<p:column headerText="Operación">
+								<h:commandLink action="listDepartament" value="Eliminar"
+									actionListener="#{departamentController.eliminar(departament)}" />
+							</p:column>
+
+							<p:column headerText="Operación">
+								<h:commandLink action="departament" value="Actualizar"
+									actionListener="#{departamentController.listarId(departament)}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="footerCont">
+
+	</ui:define>
+</ui:composition>
+</html>
